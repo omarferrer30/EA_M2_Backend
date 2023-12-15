@@ -1,0 +1,59 @@
+version: '3'
+services:
+
+  mongoXMK0:
+    image: mongo:4.4
+    container_name: mongoXKM0
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - db-tier
+
+
+  km0-api:
+    # build: .
+    image: antonibote/backend:0.2.1
+    restart: always
+    depends_on:
+      - mongoXMK0
+    ports:
+      - "9090:9090"
+    networks:
+      - db-tier
+      - app-tier
+
+
+  km0-backoffice:
+    # build: .
+    image: antonibote/backoffice:0.2.2
+    restart: always
+    ports:
+      - "8080:80"
+    networks:
+      - app-tier
+  
+
+  km0-frontend:
+    image: antonibote/frontend:0.1.10
+    restart: always
+    ports:
+      - "7070:80"
+    networks:
+      - app-tier
+
+
+volumes:
+  mongo-data:
+    driver: local
+
+networks:
+  db-tier:
+    driver: bridge
+  app-tier:
+    driver: bridge
+  
+
+
